@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.Maui.Controls;
+using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using static System.Net.Mime.MediaTypeNames;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace NoiseAlertApp.ViewModels
 {
@@ -13,6 +15,13 @@ namespace NoiseAlertApp.ViewModels
         {
             
         }
+  
+        int clicked = 0;
+        [ObservableProperty]
+        double opacity = 0.9;
+
+        [ObservableProperty]
+        string buttonText = "Start";
 
         [ObservableProperty]
         double alertFreq = 1;
@@ -21,11 +30,20 @@ namespace NoiseAlertApp.ViewModels
         double noiseThreshold = 60;
 
         [RelayCommand]
-        void OnClick()
+        void Click()
         {
-            
+            clicked++;
+            if (clicked % 2 == 0)
+            {
+                ButtonText = "Start";
+                Opacity = 0.9;
+            }
+            else
+            {
+                ButtonText = "Stop";
+                Opacity = 0.0;
+            }
         }
-
     }
 }
 

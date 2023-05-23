@@ -124,15 +124,21 @@
 
         <Image Source="donut.png"
             WidthRequest="200"
-            HeightRequest="200">
+            HeightRequest="200"
+            >
             <Image.Shadow>
                 <Shadow Brush="Black"
                 Radius="40"
-                Opacity="0.9" />
+                Opacity="{Binding Opacity}" />
             </Image.Shadow>
+            <Image.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding ClickCommand}" />
+            </Image.GestureRecognizers>
+            
         </Image>
+
         <Label
-            Text="Start Noise Alert"
+            Text="{Binding ButtonText, StringFormat='{0} Noise Alert'}"
             TextColor="#1d3b78"
             VerticalTextAlignment="Center"
             HorizontalTextAlignment="Center"
