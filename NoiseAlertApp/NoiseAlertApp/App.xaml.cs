@@ -2,13 +2,12 @@
 
 public partial class App : Application
 {
-	public App()
-	{
+    public App()
+    {
 
-		InitializeComponent();
+        InitializeComponent();
+        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjE0ODc1NUAzMjMxMmUzMjJlMzNmWEpSY09CNTBjWUJNdWdZZzY4cExEUHVXdlhHSzRUSm9MYmxPbzN6Nmo0PQ==;Mgo+DSMBaFt+QHJqVk1lQ1NNaV1CX2BZdllyQGlZd04QCV5EYF5SRHNdQF9jTXtTfkNrXXw=;Mgo+DSMBMAY9C3t2VFhiQlJPc0BAVHxLflF1VWtTe1t6dF1WACFaRnZdQV1mS3xRdkFmWXdZdXdW;Mgo+DSMBPh8sVXJ1S0R+X1pBaV1LQmFJfFBmTWldelRwfEUmHVdTRHRcQlhhS3xTckBjUXdbcHc=;MjE0ODc1OUAzMjMxMmUzMjJlMzNWRld6OGRkUURVaE9ZQTR2ZzFBOGE1QTB4aXZsaTZjblNZSUwvOU8zNktrPQ==;NRAiBiAaIQQuGjN/V0d+Xk9HfVpdX2pWfFN0RnNRdVp1flVOcDwsT3RfQF5jTHxRdEVnXH9WeXFdRQ==;ORg4AjUWIQA/Gnt2VFhiQlJPc0BAVHxLflF1VWtTe1t6dFxWACFaRnZdQV1mS3xRdkFmWXZecHxW;MjE0ODc2MkAzMjMxMmUzMjJlMzNIaGZ0MkhNNUZ5UWlrM1drc2NTazVYUWZWc3VWK3FpdXdWVEhSUGN5QUFRPQ==;MjE0ODc2M0AzMjMxMmUzMjJlMzNvdWJldWFwYWtsWWN3YnFISStwVEIwdWNmN0ZETDIySXloMGQwTGNVZWNnPQ==;MjE0ODc2NEAzMjMxMmUzMjJlMzNrbEhyRUZyM3lyczRSamdqUWovazJkUTE2c0JodlRPeUswWGg1bE5IZjhZPQ==;MjE0ODc2NUAzMjMxMmUzMjJlMzNjK3FVcmh2Y0tXQzRIU0NPWVUrUFJQa1FnTWc2NkUwZG95d21zblNNU05vPQ==;MjE0ODc2NkAzMjMxMmUzMjJlMzNmWEpSY09CNTBjWUJNdWdZZzY4cExEUHVXdlhHSzRUSm9MYmxPbzN6Nmo0PQ==");
+        MainPage = new AppShell();
 
-		MainPage = new AppShell();
-
-	}
+    }
 }
-
