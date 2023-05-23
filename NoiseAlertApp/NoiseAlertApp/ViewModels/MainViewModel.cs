@@ -15,10 +15,10 @@ namespace NoiseAlertApp.ViewModels
         }
 
         [ObservableProperty]
-        string alertFreq;
+        double alertFreq = 1;
 
         [ObservableProperty]
-        string noiseThreshold;
+        double noiseThreshold = 60;
 
         [RelayCommand]
         void OnClick()
