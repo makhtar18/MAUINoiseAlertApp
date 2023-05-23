@@ -7,6 +7,7 @@
              x:DataType="viewmodel:MainViewModel"
              Shell.BackgroundColor="White"
              >
+
     <Shell.TitleView>
         <StackLayout  HorizontalOptions="Center"> 
             <Label

@@ -1,5 +1,4 @@
 ﻿using NoiseAlertApp.ViewModels;
-
 namespace NoiseAlertApp;
 
 public partial class MainPage : ContentPage

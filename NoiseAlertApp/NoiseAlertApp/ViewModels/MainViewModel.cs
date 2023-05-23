@@ -11,11 +11,6 @@ namespace NoiseAlertApp.ViewModels
     public partial class MainViewModel : ObservableObject
     {
 
-        public MainViewModel()
-        {
-            
-        }
-  
         int clicked = 0;
         [ObservableProperty]
         double opacity = 0.9;
