@@ -30,9 +30,6 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-ios|AnyCPU'">
-	  <CreatePackage>false</CreatePackage>
-	</PropertyGroup>
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
@@ -53,25 +50,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
-		<PackageReference Include="Xamarin.Essentials" Version="1.7.5" />
-		<PackageReference Include="Syncfusion.Maui.Sliders" Version="21.2.6" />
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <None Remove="ViewModels\" />
-	  <None Remove="Resources\Images\Screenshot_2023-05-22_at_8.18.56_PM-removebg-preview.png" />
-	  <None Remove="Resources\Images\sound.png" />
-	  <None Remove="Resources\Images\soundIncreased.png" />
-	  <None Remove="Resources\Images\question_mark.png" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="ViewModels\" />
-	</ItemGroup>
-	<ItemGroup>
-	  <BundleResource Include="Resources\Images\donut.png" />
-	  <BundleResource Include="Resources\Images\sound.png" />
-	  <BundleResource Include="Resources\Images\sound_increased.png" />
-	  <BundleResource Include="Resources\Images\question_mark.png" />
-	</ItemGroup>
 </Project>
