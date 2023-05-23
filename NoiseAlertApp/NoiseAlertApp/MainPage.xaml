@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:sf="clr-namespace:Syncfusion.Maui.Sliders;assembly=Syncfusion.Maui.Sliders"
              x:Class="NoiseAlertApp.MainPage"
+             xmlns:viewmodel="clr-namespace:NoiseAlertApp.ViewModels"
+             x:DataType="viewmodel:MainViewModel"
              Shell.BackgroundColor="White"
              >
     <Shell.TitleView>
@@ -44,6 +46,7 @@
                      Interval="1"
                      Value="1"
                      WidthRequest="300"
+                     StepSize="1"
                      >
             <sf:SfSlider.ThumbOverlayStyle>
                 <sf:SliderThumbOverlayStyle Radius="3" Fill="#e3e3e3"/>
@@ -91,6 +94,7 @@
                      Interval="1"
                      Value="60"
                      WidthRequest="300"
+                     StepSize="1"
                      >
             <sf:SfSlider.ThumbOverlayStyle>
                 <sf:SliderThumbOverlayStyle Radius="3" Fill="#e3e3e3"/>
