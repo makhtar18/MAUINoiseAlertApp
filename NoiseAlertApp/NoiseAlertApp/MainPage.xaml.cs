@@ -1,4 +1,4 @@
-﻿using NoiseAlertApp.ViewModels;
+using NoiseAlertApp.ViewModels;
 namespace NoiseAlertApp;
 
 public partial class MainPage : ContentPage
@@ -9,7 +9,4 @@ public partial class MainPage : ContentPage
 		InitializeComponent();
         BindingContext = vm;
     }
-
 }
-
-
