@@ -44,7 +44,7 @@
         <sf:SfSlider Minimum="1"
                      Maximum="10"
                      Interval="1"
-                     Value="1"
+                     Value="{Binding AlertFreq}"
                      WidthRequest="300"
                      StepSize="1"
                      >
@@ -68,7 +68,7 @@
         />
         </HorizontalStackLayout>
         <Label
-            Text="1 seconds"
+            Text="{Binding AlertFreq, StringFormat='{0} seconds'}"
             TextColor="#1d3b78"
             VerticalTextAlignment="Center"
             HorizontalTextAlignment="Center"
@@ -92,7 +92,7 @@
         <sf:SfSlider Minimum="60"
                      Maximum="90"
                      Interval="1"
-                     Value="60"
+                     Value="{Binding NoiseThreshold}"
                      WidthRequest="300"
                      StepSize="1"
                      >
@@ -113,7 +113,7 @@
                />
         </HorizontalStackLayout>
         <Label
-            Text="60 db"
+            Text="{Binding NoiseThreshold, StringFormat='{0} db'}"
             TextColor="#1d3b78"
             VerticalTextAlignment="Center"
             HorizontalTextAlignment="Center"

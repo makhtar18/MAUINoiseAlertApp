@@ -15,7 +15,10 @@ namespace NoiseAlertApp.ViewModels
         }
 
         [ObservableProperty]
-        string sliderValue;
+        string alertFreq;
+
+        [ObservableProperty]
+        string noiseThreshold;
 
         [RelayCommand]
         void OnClick()
