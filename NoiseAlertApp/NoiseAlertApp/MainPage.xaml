@@ -166,7 +166,6 @@
             </HorizontalStackLayout>
             <Switch OnColor="#34c75b" ThumbColor="#e3e8e5" HorizontalOptions="EndAndExpand" Margin="0,0,0,0"/>
         </Grid>
-        
 
     </StackLayout>
 
