@@ -109,8 +109,8 @@
             </sf:SfSlider.TrackStyle>
         </sf:SfSlider>
         <Image Source="sound_increased.png"
-               WidthRequest="24"
-               HeightRequest="24"
+               WidthRequest="26"
+               HeightRequest="26"
                />
         </HorizontalStackLayout>
         <Label
@@ -154,7 +154,7 @@
             </Grid.ColumnDefinitions>
             <HorizontalStackLayout HorizontalOptions="Start" Margin="0">
             <Label
-            Text="Mark alerts as critical"
+            Text="Mark alerts as critical "
             TextColor="#1d3b78"
             VerticalTextAlignment="Center"
             HorizontalTextAlignment="Start"
@@ -162,7 +162,7 @@
             HeightRequest="50"
             FontSize="Small"
             />
-            <Image Source="question_mark.png" WidthRequest="20" HorizontalOptions="StartAndExpand"></Image>
+            <Image Source="question_mark.png" WidthRequest="14" HorizontalOptions="StartAndExpand"></Image>
             </HorizontalStackLayout>
             <Switch OnColor="#34c75b" ThumbColor="#e3e8e5" HorizontalOptions="EndAndExpand" Margin="0,0,0,0"/>
         </Grid>

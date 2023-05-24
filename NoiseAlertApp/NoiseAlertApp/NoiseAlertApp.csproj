@@ -60,8 +60,14 @@
 
 	<ItemGroup>
 	  <None Remove="Resources\Images\donut.png" />
+	  <None Remove="Resources\Images\sound.png" />
+	  <None Remove="Resources\Images\sound-increased.png" />
+	  <None Remove="Resources\Images\question_mark.png" />
 	</ItemGroup>
 	<ItemGroup>
 	  <BundleResource Include="Resources\Images\donut.png" />
+	  <BundleResource Include="Resources\Images\sound.png" />
+	  <BundleResource Include="Resources\Images\sound_increased.png" />
+	  <BundleResource Include="Resources\Images\question_mark.png" />
 	</ItemGroup>
 </Project>
