@@ -6,6 +6,7 @@
              xmlns:viewmodel="clr-namespace:NoiseAlertApp.ViewModels"
              x:DataType="viewmodel:MainViewModel"
              Shell.BackgroundColor="White"
+             BackgroundColor="White"
              >
 
     <Shell.TitleView>
