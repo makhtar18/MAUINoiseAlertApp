@@ -124,8 +124,8 @@
         />
 
         <Image Source="donut.png"
-            WidthRequest="200"
-            HeightRequest="200"
+            WidthRequest="175"
+            HeightRequest="175"
             >
             <Image.Shadow>
                 <Shadow Brush="Black"
