@@ -6,17 +6,21 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Plugin.AudioRecorder;
+using Android.Media;
 
 
 namespace NoiseAlertApp.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
-        private readonly AudioRecorderService audioRecorderService = new AudioRecorderService();
+        private AudioRecorderService audioRecorderService;
 
-        private readonly AudioPlayer audioPlayer = new AudioPlayer();
+        private AudioPlayer audioPlayer = new AudioPlayer();
 
         int clicked = 0;
+
+        [ObservableProperty]
+        double maxDecibels;
 
         [ObservableProperty]
         double opacity = 0.9;
@@ -30,6 +34,20 @@ namespace NoiseAlertApp.ViewModels
         [ObservableProperty]
         double noiseThreshold = 60;
 
+        public MainViewModel()
+        {
+            audioRecorderService = new AudioRecorderService();
+            audioRecorderService.AudioInputReceived += AudioInputReceived;
+            maxDecibels = 0.0;
+        }
+
+        private void AudioInputReceived(object sender, string filePath)
+        {
+            var audioAnalyzer = new MyAudioAnalyzer();
+            var decibels = audioAnalyzer.CalculateDecibels(filePath);
+            MaxDecibels = decibels;
+        }
+
         [RelayCommand]
         void Click()
         {
@@ -38,20 +56,14 @@ namespace NoiseAlertApp.ViewModels
             {
                 ButtonText = "Start";
                 Opacity = 0.9;
-                if (audioRecorderService.IsRecording)
-                {
-                    audioRecorderService.StopRecording();
-                    audioPlayer.Play(audioRecorderService.GetAudioFilePath());
-                }
+                audioRecorderService.StopRecording();
+                audioPlayer.Play(audioRecorderService.GetAudioFilePath());
             }
             else
             {
                 ButtonText = "Stop";
                 Opacity = 0.0;
-                if (!audioRecorderService.IsRecording)
-                {
-                    audioRecorderService.StartRecording();
-                }
+                audioRecorderService.StartRecording();
             }
         }
     }
