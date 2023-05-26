@@ -60,6 +60,7 @@
 		<PackageReference Include="Syncfusion.Maui.Sliders" Version="21.2.6" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
 		<PackageReference Include="Plugin.AudioRecorder" Version="1.1.0" />
+		<PackageReference Include="NAudio" Version="2.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>

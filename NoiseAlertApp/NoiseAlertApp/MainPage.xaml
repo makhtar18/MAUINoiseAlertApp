@@ -167,6 +167,14 @@
             </HorizontalStackLayout>
             <Switch OnColor="#34c75b" ThumbColor="#e3e8e5" HorizontalOptions="EndAndExpand" Margin="0,0,0,0"/>
         </Grid>
+        <Label
+            Text="{Binding MaxDecibels, StringFormat='{0} db'}"
+            TextColor="#1d3b78"
+            VerticalTextAlignment="Center"
+            HorizontalTextAlignment="Center"
+            HorizontalOptions="Center"
+            FontSize="Medium"
+        />
 
     </StackLayout>
 
