@@ -2,17 +2,15 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Plugin.AudioRecorder;
 using System.Threading;
-
+using Xamarin.Essentials;
+using Android.Media;
+using static Microsoft.Maui.ApplicationModel.Permissions;
 
 namespace NoiseAlertApp.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
-        private AudioRecorderService audioRecorderService;
-
-        private AudioPlayer audioPlayer = new AudioPlayer();
 
         int clicked = 0;
 
@@ -31,23 +29,19 @@ namespace NoiseAlertApp.ViewModels
         [ObservableProperty]
         int noiseThreshold = 60;
 
-        private bool isRecording = false;
+        private const int SampleRate = 44100;
+        private const ChannelIn ChannelConfig = ChannelIn.Mono;
 
-        private CancellationTokenSource cancellationTokenSource;
+        private AudioRecord audioRecord;
+        private AudioTrack audioTrack;
+        private bool isStreaming;
+
+        private Microphone mic = new Microphone();
 
         public MainViewModel()
         {
-            audioRecorderService = new AudioRecorderService();
-            //audioRecorderService.AudioInputReceived += AudioInputReceived;
             maxDecibels = 0.0;
-        }
-
-        private void AudioInputReceived(string filePath)
-        {
-            Console.WriteLine("EventHandler ", filePath);
-            var audioAnalyzer = new MyAudioAnalyzer();
-            var decibels = audioAnalyzer.CalculateDecibels(filePath);
-            MaxDecibels = decibels;
+            mic.RequestAsync();
         }
 
         [RelayCommand]
@@ -58,57 +52,72 @@ namespace NoiseAlertApp.ViewModels
             {
                 ButtonText = "Start";
                 Opacity = 0.9;
-                isRecording = false;
-                //audioRecorderService.StopRecording();
-                //audioPlayer.Play(audioRecorderService.GetAudioFilePath());
+                StopStreaming();
             }
             else
             {
                 ButtonText = "Stop";
                 Opacity = 0.0;
-                isRecording = true;
-                ContinuousRecording();
-                //audioRecorderService.StartRecording();
-
+                StartStreaming();
             }
         }
 
-        private async Task ContinuousRecording()
+        public void StartStreaming()
         {
-            cancellationTokenSource = new CancellationTokenSource();
+            MaxDecibels = 0.0;
+            int minBufferSize = AudioRecord.GetMinBufferSize(SampleRate, ChannelConfig, Encoding.Pcm16bit);
+            audioRecord = new AudioRecord(AudioSource.Mic, SampleRate, ChannelConfig, Encoding.Pcm16bit, minBufferSize);
 
-            while (isRecording)
+            int maxBufferSize = AudioTrack.GetMinBufferSize(SampleRate, ChannelOut.Stereo, Encoding.Pcm16bit);
+            audioTrack = new AudioTrack(Android.Media.Stream.Music, SampleRate, ChannelOut.Stereo, Encoding.Pcm16bit, maxBufferSize, AudioTrackMode.Stream);
+
+            isStreaming = true;
+            audioRecord.StartRecording();
+            audioTrack.Play();
+            _ = ProcessAudioDataAsync();
+        }
+
+        public void StopStreaming()
+        {
+            isStreaming = false;
+            audioRecord.Stop();
+            audioTrack.Stop();
+            audioRecord.Release();
+            audioTrack.Release();
+            MaxDecibels = 0.0;
+        }
+
+        private async Task ProcessAudioDataAsync()
+        {
+            byte[] buffer = new byte[4096];
+
+            while (isStreaming)
             {
-                // Execute your task here
-                if (audioRecorderService.IsRecording)
+                int bytesRead = await audioRecord.ReadAsync(buffer, 0, buffer.Length);
+
+                if (bytesRead > 0)
                 {
-                    Console.WriteLine("Stopping Recording: " + DateTime.Now);
-                    await audioRecorderService.StopRecording();
-                    AudioInputReceived(audioRecorderService.GetAudioFilePath());
-                    Console.WriteLine("Starting Recording alone: " + DateTime.Now);
-                    await audioRecorderService.StartRecording();
-                }
-                else
-                {
-                    Console.WriteLine("Starting Recording: " + DateTime.Now);
-                    await audioRecorderService.StartRecording();
+                    double decibels = CalculateDecibels(buffer, bytesRead);
+
+                    MaxDecibels = decibels;
                 }
 
-                // Delay for 10 seconds
-                Console.WriteLine("Starting Delay: " + DateTime.Now + " " + audioRecorderService.IsRecording);
-
-                try
-                {
-                    await Task.Delay(TimeSpan.FromSeconds(AlertFreq), cancellationTokenSource.Token);
-                }
-                catch (TaskCanceledException)
-                {
-                    // Task was canceled, exit the loop
-                    break;
-                }
-
-                Console.WriteLine("Stopping Delay: " + DateTime.Now + " " + audioRecorderService.IsRecording);
+                audioTrack.Write(buffer, 0, bytesRead);
             }
+        }
+
+        private double CalculateDecibels(byte[] audioData, int length)
+        {
+            double sum = 0;
+            for (int i = 0; i < length; i += 2)
+            {
+                short sample = BitConverter.ToInt16(audioData, i);
+                sum += sample * sample;
+            }
+            double rms = Math.Sqrt(sum / (length / 2));
+            double decibels = 20 * Math.Log10(rms) ;
+
+            return decibels;
         }
 
     }
