@@ -53,7 +53,6 @@ namespace NoiseAlertApp.ViewModels
                 ButtonText = "Start";
                 Opacity = 0.9;
                 StopStreaming();
-                MaxDecibels = 0.0;
             }
             else
             {
@@ -65,6 +64,7 @@ namespace NoiseAlertApp.ViewModels
 
         public void StartStreaming()
         {
+            MaxDecibels = 0.0;
             int minBufferSize = AudioRecord.GetMinBufferSize(SampleRate, ChannelConfig, Encoding.Pcm16bit);
             audioRecord = new AudioRecord(AudioSource.Mic, SampleRate, ChannelConfig, Encoding.Pcm16bit, minBufferSize);
 
@@ -84,6 +84,7 @@ namespace NoiseAlertApp.ViewModels
             audioTrack.Stop();
             audioRecord.Release();
             audioTrack.Release();
+            MaxDecibels = 0.0;
         }
 
         private async Task ProcessAudioDataAsync()
