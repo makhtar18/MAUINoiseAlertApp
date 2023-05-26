@@ -53,6 +53,7 @@ namespace NoiseAlertApp.ViewModels
                 ButtonText = "Start";
                 Opacity = 0.9;
                 StopStreaming();
+                MaxDecibels = 0.0;
             }
             else
             {
