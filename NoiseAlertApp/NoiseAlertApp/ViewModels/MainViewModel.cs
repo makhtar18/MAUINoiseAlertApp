@@ -2,18 +2,15 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Plugin.AudioRecorder;
 using System.Threading;
 using Xamarin.Essentials;
 using Android.Media;
+using static Microsoft.Maui.ApplicationModel.Permissions;
 
 namespace NoiseAlertApp.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
-        private AudioRecorderService audioRecorderService;
-
-        private AudioPlayer audioPlayer = new AudioPlayer();
 
         int clicked = 0;
 
@@ -39,9 +36,12 @@ namespace NoiseAlertApp.ViewModels
         private AudioTrack audioTrack;
         private bool isStreaming;
 
+        private Microphone mic = new Microphone();
+
         public MainViewModel()
         {
             maxDecibels = 0.0;
+            mic.RequestAsync();
         }
 
         [RelayCommand]
