@@ -2,11 +2,8 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using static System.Net.Mime.MediaTypeNames;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
 using Plugin.AudioRecorder;
-using Android.Media;
+using System.Threading;
 
 
 namespace NoiseAlertApp.ViewModels
@@ -29,20 +26,25 @@ namespace NoiseAlertApp.ViewModels
         string buttonText = "Start";
 
         [ObservableProperty]
-        double alertFreq = 1;
+        int alertFreq = 1;
 
         [ObservableProperty]
-        double noiseThreshold = 60;
+        int noiseThreshold = 60;
+
+        private bool isRecording = false;
+
+        private CancellationTokenSource cancellationTokenSource;
 
         public MainViewModel()
         {
             audioRecorderService = new AudioRecorderService();
-            audioRecorderService.AudioInputReceived += AudioInputReceived;
+            //audioRecorderService.AudioInputReceived += AudioInputReceived;
             maxDecibels = 0.0;
         }
 
-        private void AudioInputReceived(object sender, string filePath)
+        private void AudioInputReceived(string filePath)
         {
+            Console.WriteLine("EventHandler ", filePath);
             var audioAnalyzer = new MyAudioAnalyzer();
             var decibels = audioAnalyzer.CalculateDecibels(filePath);
             MaxDecibels = decibels;
@@ -56,16 +58,59 @@ namespace NoiseAlertApp.ViewModels
             {
                 ButtonText = "Start";
                 Opacity = 0.9;
-                audioRecorderService.StopRecording();
-                audioPlayer.Play(audioRecorderService.GetAudioFilePath());
+                isRecording = false;
+                //audioRecorderService.StopRecording();
+                //audioPlayer.Play(audioRecorderService.GetAudioFilePath());
             }
             else
             {
                 ButtonText = "Stop";
                 Opacity = 0.0;
-                audioRecorderService.StartRecording();
+                isRecording = true;
+                ContinuousRecording();
+                //audioRecorderService.StartRecording();
+
             }
         }
+
+        private async Task ContinuousRecording()
+        {
+            cancellationTokenSource = new CancellationTokenSource();
+
+            while (isRecording)
+            {
+                // Execute your task here
+                if (audioRecorderService.IsRecording)
+                {
+                    Console.WriteLine("Stopping Recording: " + DateTime.Now);
+                    await audioRecorderService.StopRecording();
+                    AudioInputReceived(audioRecorderService.GetAudioFilePath());
+                    Console.WriteLine("Starting Recording alone: " + DateTime.Now);
+                    await audioRecorderService.StartRecording();
+                }
+                else
+                {
+                    Console.WriteLine("Starting Recording: " + DateTime.Now);
+                    await audioRecorderService.StartRecording();
+                }
+
+                // Delay for 10 seconds
+                Console.WriteLine("Starting Delay: " + DateTime.Now + " " + audioRecorderService.IsRecording);
+
+                try
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(AlertFreq), cancellationTokenSource.Token);
+                }
+                catch (TaskCanceledException)
+                {
+                    // Task was canceled, exit the loop
+                    break;
+                }
+
+                Console.WriteLine("Stopping Delay: " + DateTime.Now + " " + audioRecorderService.IsRecording);
+            }
+        }
+
     }
 }
 
