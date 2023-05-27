@@ -9,6 +9,7 @@ using Plugin.LocalNotification;
 using static Microsoft.Maui.ApplicationModel.Permissions;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
+using Plugin.LocalNotification.AndroidOption;
 
 namespace NoiseAlertApp.ViewModels
 {
@@ -48,14 +49,18 @@ namespace NoiseAlertApp.ViewModels
         NotificationRequest fine = new NotificationRequest
         {
             NotificationId = 1337,
-            Title = "Below Threshold"
+            Title = "Below Threshold",
         };
 
 
         NotificationRequest tooLoud = new NotificationRequest
         {
             NotificationId = 1338,
-            Title = "Heavy Noise Alert! Please wear protective gear!"
+            Title = "Heavy Noise Alert! Please wear protective gear!",
+            Android = new AndroidOptions
+            {
+                VibrationPattern = new long[] { 0, 1000, 500, 1000 }
+            }
         };
         private Microphone mic = new Microphone();
 
@@ -64,7 +69,6 @@ namespace NoiseAlertApp.ViewModels
             Decibels = 0.0;
             Services = Services_;
             mic.RequestAsync();
-
         }
 
         [RelayCommand]
@@ -109,7 +113,7 @@ namespace NoiseAlertApp.ViewModels
             audioRecord = new AudioRecord(AudioSource.Mic, SampleRate, ChannelConfig, Encoding.Pcm16bit, minBufferSize);
 
             int maxBufferSize = AudioTrack.GetMinBufferSize(SampleRate, ChannelOut.Stereo, Encoding.Pcm16bit);
-            //audioTrack = new AudioTrack(Android.Media.Stream.Music, SampleRate, ChannelOut.Stereo, Encoding.Pcm16bit, maxBufferSize, AudioTrackMode.Stream);
+            audioTrack = new AudioTrack(Android.Media.Stream.Music, SampleRate, ChannelOut.Stereo, Encoding.Pcm16bit, maxBufferSize, AudioTrackMode.Stream);
             timer.Interval = AlertFreq * 1000;
             timer.Elapsed += (sender, e) => HandleTimer();
             timer.Start();
@@ -125,9 +129,9 @@ namespace NoiseAlertApp.ViewModels
             timer.Stop();
             isStreaming = false;
             audioRecord.Stop();
-            //audioTrack.Stop();
+            audioTrack.Stop();
             audioRecord.Release();
-            //audioTrack.Release();
+            audioTrack.Release();
             Decibels = 0.0;
         }
 
