@@ -5,17 +5,21 @@ using CommunityToolkit.Mvvm.Input;
 using System.Threading;
 using Xamarin.Essentials;
 using Android.Media;
+using Plugin.LocalNotification;
 using static Microsoft.Maui.ApplicationModel.Permissions;
+using AndroidX.Core.App;
+using AndroidX.Core.Content;
 
 namespace NoiseAlertApp.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
+        MauiProgram.IServiceTest Services;
 
         int clicked = 0;
 
         [ObservableProperty]
-        double maxDecibels;
+        double decibels;
 
         [ObservableProperty]
         double opacity = 0.9;
@@ -32,16 +36,35 @@ namespace NoiseAlertApp.ViewModels
         private const int SampleRate = 44100;
         private const ChannelIn ChannelConfig = ChannelIn.Mono;
 
+
         private AudioRecord audioRecord;
         private AudioTrack audioTrack;
+
         private bool isStreaming;
 
+        System.Timers.Timer timer = new System.Timers.Timer();
+        double lastDecibels = 0.0;
+
+        NotificationRequest fine = new NotificationRequest
+        {
+            NotificationId = 1337,
+            Title = "Below Threshold"
+        };
+
+
+        NotificationRequest tooLoud = new NotificationRequest
+        {
+            NotificationId = 1338,
+            Title = "Heavy Noise Alert! Please wear protective gear!"
+        };
         private Microphone mic = new Microphone();
 
-        public MainViewModel()
+        public MainViewModel(MauiProgram.IServiceTest Services_)
         {
-            maxDecibels = 0.0;
+            Decibels = 0.0;
+            Services = Services_;
             mic.RequestAsync();
+
         }
 
         [RelayCommand]
@@ -61,30 +84,51 @@ namespace NoiseAlertApp.ViewModels
                 StartStreaming();
             }
         }
+        void HandleTimer()
+        {
+            LocalNotificationCenter.Current.ClearAll();
+            Console.WriteLine("Interval Called");
+            if (lastDecibels > NoiseThreshold)
+            {
+                tooLoud.Title = "Heavy Noise Alert: "+Decibels+" dB! Please wear protective Gear!";
+                LocalNotificationCenter.Current.Show(tooLoud);
+            }
+            else
+            {
+                fine.Title = "Below Threshold " + Decibels + " dB";
+                LocalNotificationCenter.Current.Show(fine);
 
+            }
+
+        }
         public void StartStreaming()
         {
-            MaxDecibels = 0.0;
+            Services.Start();
+            Decibels = 0.0;
             int minBufferSize = AudioRecord.GetMinBufferSize(SampleRate, ChannelConfig, Encoding.Pcm16bit);
             audioRecord = new AudioRecord(AudioSource.Mic, SampleRate, ChannelConfig, Encoding.Pcm16bit, minBufferSize);
 
             int maxBufferSize = AudioTrack.GetMinBufferSize(SampleRate, ChannelOut.Stereo, Encoding.Pcm16bit);
-            audioTrack = new AudioTrack(Android.Media.Stream.Music, SampleRate, ChannelOut.Stereo, Encoding.Pcm16bit, maxBufferSize, AudioTrackMode.Stream);
-
+            //audioTrack = new AudioTrack(Android.Media.Stream.Music, SampleRate, ChannelOut.Stereo, Encoding.Pcm16bit, maxBufferSize, AudioTrackMode.Stream);
+            timer.Interval = AlertFreq * 1000;
+            timer.Elapsed += (sender, e) => HandleTimer();
+            timer.Start();
             isStreaming = true;
             audioRecord.StartRecording();
-            audioTrack.Play();
+            //audioTrack.Play();
             _ = ProcessAudioDataAsync();
         }
 
         public void StopStreaming()
         {
+            Services.Stop();
+            timer.Stop();
             isStreaming = false;
             audioRecord.Stop();
-            audioTrack.Stop();
+            //audioTrack.Stop();
             audioRecord.Release();
-            audioTrack.Release();
-            MaxDecibels = 0.0;
+            //audioTrack.Release();
+            Decibels = 0.0;
         }
 
         private async Task ProcessAudioDataAsync()
@@ -99,10 +143,13 @@ namespace NoiseAlertApp.ViewModels
                 {
                     double decibels = CalculateDecibels(buffer, bytesRead);
 
-                    MaxDecibels = decibels;
+                    Decibels = Math.Round(decibels, 2);
+                    lastDecibels = decibels;
                 }
 
                 audioTrack.Write(buffer, 0, bytesRead);
+                //timer check
+
             }
         }
 
@@ -114,8 +161,12 @@ namespace NoiseAlertApp.ViewModels
                 short sample = BitConverter.ToInt16(audioData, i);
                 sum += sample * sample;
             }
-            double rms = Math.Sqrt(sum / (length / 2));
-            double decibels = 20 * Math.Log10(rms) ;
+            double decibels = 0.0;
+            if (sum != 0.0)
+            {
+                double rms = Math.Sqrt(sum / (length / 2));
+                decibels = 20 * Math.Log10(rms);
+            }
 
             return decibels;
         }

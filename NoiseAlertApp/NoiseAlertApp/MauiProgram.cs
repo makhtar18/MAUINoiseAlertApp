@@ -5,6 +5,11 @@ namespace NoiseAlertApp;
 
 public static class MauiProgram
 {
+    public interface IServiceTest
+    {
+        void Start();
+        void Stop();
+    }
     public static MauiApp CreateMauiApp()
     {
         var builder = MauiApp.CreateBuilder();
@@ -19,6 +24,7 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<MainPage>();
         builder.Services.AddSingleton<MainViewModel>();
+        builder.Services.AddTransient<IServiceTest, DemoServices>();
 
 #if DEBUG
         builder.Logging.AddDebug();
