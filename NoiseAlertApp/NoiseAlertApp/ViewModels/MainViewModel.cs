@@ -56,11 +56,7 @@ namespace NoiseAlertApp.ViewModels
         NotificationRequest tooLoud = new NotificationRequest
         {
             NotificationId = 1338,
-            Title = "Heavy Noise Alert! Please wear protective gear!",
-            Android = new AndroidOptions
-            {
-                VibrationPattern = new long[] { 0, 1000, 500, 1000 }
-            }
+            Title = "Heavy Noise Alert! Please wear protective gear!"
         };
         private Microphone mic = new Microphone();
 
