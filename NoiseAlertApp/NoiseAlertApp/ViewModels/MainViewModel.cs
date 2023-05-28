@@ -10,6 +10,8 @@ using static Microsoft.Maui.ApplicationModel.Permissions;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
 using Plugin.LocalNotification.AndroidOption;
+using Permissions = Microsoft.Maui.ApplicationModel.Permissions;
+using PermissionStatus = Microsoft.Maui.ApplicationModel.PermissionStatus;
 
 namespace NoiseAlertApp.ViewModels
 {
@@ -50,6 +52,7 @@ namespace NoiseAlertApp.ViewModels
         {
             NotificationId = 1337,
             Title = "Below Threshold",
+            Silent = true
         };
 
 
@@ -64,12 +67,28 @@ namespace NoiseAlertApp.ViewModels
         {
             Decibels = 0.0;
             Services = Services_;
-            mic.RequestAsync();
+            
+            
+        }
+
+        async Task GetNotificationPermission()
+        {
+            var status = await Permissions.CheckStatusAsync<NotificationPermission>();
+            if (!status.Equals(PermissionStatus.Granted))
+            {
+                if (Permissions.ShouldShowRationale<NotificationPermission>())
+                {
+                    await Shell.Current.DisplayAlert("Needs Permission", "Because!!!", "OK");
+                }
+            }
+            await Permissions.RequestAsync<NotificationPermission>();
         }
 
         [RelayCommand]
-        void Click()
+        async void Click()
         {
+            await mic.RequestAsync();
+            await GetNotificationPermission();
             clicked++;
             if (clicked % 2 == 0)
             {
