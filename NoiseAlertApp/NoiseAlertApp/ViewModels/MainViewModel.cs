@@ -12,6 +12,7 @@ using AndroidX.Core.Content;
 using Plugin.LocalNotification.AndroidOption;
 using Permissions = Microsoft.Maui.ApplicationModel.Permissions;
 using PermissionStatus = Microsoft.Maui.ApplicationModel.PermissionStatus;
+using Android.App;
 
 namespace NoiseAlertApp.ViewModels
 {
@@ -29,6 +30,9 @@ namespace NoiseAlertApp.ViewModels
 
         [ObservableProperty]
         string buttonText = "Start";
+
+        [ObservableProperty]
+        bool isCrirical;
 
         [ObservableProperty]
         int alertFreq = 1;
@@ -59,7 +63,8 @@ namespace NoiseAlertApp.ViewModels
         NotificationRequest tooLoud = new NotificationRequest
         {
             NotificationId = 1338,
-            Title = "Heavy Noise Alert! Please wear protective gear!"
+            Title = "Heavy Noise Alert!",
+            Description = "Please wear protective gear!"
         };
         private Microphone mic = new Microphone();
 
@@ -67,8 +72,7 @@ namespace NoiseAlertApp.ViewModels
         {
             Decibels = 0.0;
             Services = Services_;
-            
-            
+            isCrirical = false;
         }
 
         async Task GetNotificationPermission()
@@ -110,6 +114,13 @@ namespace NoiseAlertApp.ViewModels
             if (lastDecibels > NoiseThreshold)
             {
                 tooLoud.Title = "Heavy Noise Alert: "+Decibels+" dB! Please wear protective Gear!";
+                if (IsCrirical)
+                {
+                    tooLoud.Android = new AndroidOptions
+                    {
+                        Priority = AndroidPriority.Max
+                    };
+                }
                 LocalNotificationCenter.Current.Show(tooLoud);
             }
             else
