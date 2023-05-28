@@ -80,12 +80,8 @@ namespace NoiseAlertApp.ViewModels
             var status = await Permissions.CheckStatusAsync<NotificationPermission>();
             if (!status.Equals(PermissionStatus.Granted))
             {
-                if (Permissions.ShouldShowRationale<NotificationPermission>())
-                {
-                    await Shell.Current.DisplayAlert("Needs Permission", "Because!!!", "OK");
-                }
+                await Permissions.RequestAsync<NotificationPermission>();
             }
-            await Permissions.RequestAsync<NotificationPermission>();
         }
 
         [RelayCommand]
