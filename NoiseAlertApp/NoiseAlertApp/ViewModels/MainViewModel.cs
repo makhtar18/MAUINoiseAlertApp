@@ -109,7 +109,7 @@ namespace NoiseAlertApp.ViewModels
             Console.WriteLine("Interval Called");
             if (lastDecibels > NoiseThreshold)
             {
-                tooLoud.Title = "Heavy Noise Alert: "+Decibels+" dB! Please wear protective Gear!";
+                tooLoud.Title = "Heavy Noise Alert: "+Decibels+" dB!";
                 if (IsCrirical)
                 {
                     tooLoud.Android = new AndroidOptions
