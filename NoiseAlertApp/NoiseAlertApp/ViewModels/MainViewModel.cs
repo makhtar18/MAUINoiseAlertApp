@@ -32,7 +32,7 @@ namespace NoiseAlertApp.ViewModels
         string buttonText = "Start";
 
         [ObservableProperty]
-        bool isCrirical;
+        bool isCritical;
 
         [ObservableProperty]
         int alertFreq = 1;
@@ -72,7 +72,7 @@ namespace NoiseAlertApp.ViewModels
         {
             Decibels = 0.0;
             Services = Services_;
-            isCrirical = false;
+            isCritical = false;
         }
 
         async Task GetNotificationPermission()
@@ -110,7 +110,7 @@ namespace NoiseAlertApp.ViewModels
             if (lastDecibels > NoiseThreshold)
             {
                 tooLoud.Title = "Heavy Noise Alert: "+Decibels+" dB!";
-                if (IsCrirical)
+                if (IsCritical)
                 {
                     tooLoud.Android = new AndroidOptions
                     {
