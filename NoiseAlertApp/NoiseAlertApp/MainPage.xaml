@@ -165,7 +165,7 @@
             />
             <Image Source="question_mark.png" WidthRequest="14" HorizontalOptions="StartAndExpand"></Image>
             </HorizontalStackLayout>
-            <Switch OnColor="#34c75b" ThumbColor="#e3e8e5" HorizontalOptions="EndAndExpand" Margin="0,0,0,0"/>
+            <Switch IsToggled="{Binding IsCrirical}" OnColor="#34c75b" ThumbColor="#e3e8e5" HorizontalOptions="EndAndExpand" Margin="0,0,0,0" />
         </Grid>
 
     </StackLayout>

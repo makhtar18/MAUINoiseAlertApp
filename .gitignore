@@ -396,3 +396,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+NoiseAlertApp/NoiseAlertApp/Resources/Splash/.DS_Store
+NoiseAlertApp/NoiseAlertApp/Resources/.DS_Store
+NoiseAlertApp/NoiseAlertApp/Resources/AppIcon/.DS_Store
+NoiseAlertApp/NoiseAlertApp/Resources/Styles/.DS_Store

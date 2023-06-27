@@ -9,6 +9,10 @@ using Plugin.LocalNotification;
 using static Microsoft.Maui.ApplicationModel.Permissions;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
+using Plugin.LocalNotification.AndroidOption;
+using Permissions = Microsoft.Maui.ApplicationModel.Permissions;
+using PermissionStatus = Microsoft.Maui.ApplicationModel.PermissionStatus;
+using Android.App;
 
 namespace NoiseAlertApp.ViewModels
 {
@@ -26,6 +30,9 @@ namespace NoiseAlertApp.ViewModels
 
         [ObservableProperty]
         string buttonText = "Start";
+
+        [ObservableProperty]
+        bool isCritical;
 
         [ObservableProperty]
         int alertFreq = 1;
@@ -48,14 +55,16 @@ namespace NoiseAlertApp.ViewModels
         NotificationRequest fine = new NotificationRequest
         {
             NotificationId = 1337,
-            Title = "Below Threshold"
+            Title = "Below Threshold",
+            Silent = true
         };
 
 
         NotificationRequest tooLoud = new NotificationRequest
         {
             NotificationId = 1338,
-            Title = "Heavy Noise Alert! Please wear protective gear!"
+            Title = "Heavy Noise Alert!",
+            Description = "Please wear protective gear!"
         };
         private Microphone mic = new Microphone();
 
@@ -63,13 +72,23 @@ namespace NoiseAlertApp.ViewModels
         {
             Decibels = 0.0;
             Services = Services_;
-            mic.RequestAsync();
+            isCritical = false;
+        }
 
+        async Task GetNotificationPermission()
+        {
+            var status = await Permissions.CheckStatusAsync<NotificationPermission>();
+            if (!status.Equals(PermissionStatus.Granted))
+            {
+                await Permissions.RequestAsync<NotificationPermission>();
+            }
         }
 
         [RelayCommand]
-        void Click()
+        async void Click()
         {
+            await mic.RequestAsync();
+            await GetNotificationPermission();
             clicked++;
             if (clicked % 2 == 0)
             {
@@ -90,7 +109,14 @@ namespace NoiseAlertApp.ViewModels
             Console.WriteLine("Interval Called");
             if (lastDecibels > NoiseThreshold)
             {
-                tooLoud.Title = "Heavy Noise Alert: "+Decibels+" dB! Please wear protective Gear!";
+                tooLoud.Title = "Heavy Noise Alert: "+Decibels+" dB!";
+                if (IsCritical)
+                {
+                    tooLoud.Android = new AndroidOptions
+                    {
+                        Priority = AndroidPriority.Max
+                    };
+                }
                 LocalNotificationCenter.Current.Show(tooLoud);
             }
             else
@@ -109,7 +135,7 @@ namespace NoiseAlertApp.ViewModels
             audioRecord = new AudioRecord(AudioSource.Mic, SampleRate, ChannelConfig, Encoding.Pcm16bit, minBufferSize);
 
             int maxBufferSize = AudioTrack.GetMinBufferSize(SampleRate, ChannelOut.Stereo, Encoding.Pcm16bit);
-            //audioTrack = new AudioTrack(Android.Media.Stream.Music, SampleRate, ChannelOut.Stereo, Encoding.Pcm16bit, maxBufferSize, AudioTrackMode.Stream);
+            audioTrack = new AudioTrack(Android.Media.Stream.Music, SampleRate, ChannelOut.Stereo, Encoding.Pcm16bit, maxBufferSize, AudioTrackMode.Stream);
             timer.Interval = AlertFreq * 1000;
             timer.Elapsed += (sender, e) => HandleTimer();
             timer.Start();
@@ -125,9 +151,9 @@ namespace NoiseAlertApp.ViewModels
             timer.Stop();
             isStreaming = false;
             audioRecord.Stop();
-            //audioTrack.Stop();
+            audioTrack.Stop();
             audioRecord.Release();
-            //audioTrack.Release();
+            audioTrack.Release();
             Decibels = 0.0;
         }
 
@@ -173,4 +199,3 @@ namespace NoiseAlertApp.ViewModels
 
     }
 }
-
